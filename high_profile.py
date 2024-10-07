@@ -1,164 +1,98 @@
 import random
-import faker
 import pandas as pd
+from faker import Faker
 
-# Initialize Faker
-fake = faker.Faker('en_NG')  # Nigerian locale for realistic context
+# Set up Faker
+fake = Faker(['en_NG'])  # Nigeria locale for Faker
 
-# Define 150 unique Yoruba first names and 150 unique Yoruba last names
-yoruba_first_names = [
-    'Adebayo', 'Adetokunbo', 'Adeola', 'Adeshola', 'Adetunji', 'Ademola', 
-    'Folake', 'Olufunke', 'Tunde', 'Kehinde', 'Taiwo', 'Yejide', 
-    'Femi', 'Oluwaseun', 'Olamide', 'Temitope', 'Bukola', 'Damilola', 
-    'Ayotunde', 'Ireoluwa', 'Tosin', 'Seun', 'Dayo', 'Modupe', 
-    'Opeyemi', 'Olawale', 'Chinonso', 'Chidera', 'Emeka', 'Obinna', 
-    'Kenechukwu', 'Ifedayo', 'Tobiloba', 'Oyinlola', 'Tolu', 'Ojo', 
-    'Folorunsho', 'Olatunde', 'Olatunji', 'Oluwatobi', 'Oluwatimilehin', 
-    'Oluwanifemi', 'Ayo', 'Yinka', 'Temiloluwa', 'Akin', 'Mide', 
-    'Yemi', 'Seyi', 'Dayo', 'Kiki', 'Fiyinfoluwa', 'Damilare', 
-    'Yejide', 'Titilayo', 'Jibola', 'Oluwakemi', 'Olajumoke', 
-    'Abiola', 'Olasunkanmi', 'Adeyemi', 'Temitope', 'Oluwanisola', 
-    'Oluwasemilore', 'Funmilola', 'Eniola', 'Moyosore', 'Toyin', 
-    'Adewale', 'Abike', 'Anu', 'Doyin', 'Omolara', 'Ayanfe', 
-    'Olamijuwon', 'Folarin', 'Oluwatofunmi', 'Adunola', 'Ireti', 
-    'Afolabi', 'Temilade', 'Yetunde', 'Oreoluwa', 'Ayoade', 
-    'Bimpe', 'Ibukun', 'Kehinde', 'Oluwatobiloba', 'Amarachi', 
-    'Adebisi', 'Oni', 'Ojo', 'Ayanfe', 'Afolabi', 'Boluwatife', 
-    'Simi', 'Abike', 'Tawakalitu', 'Temitope', 'Dapo', 'Modupe', 
-    'Afishetan', 'Oluwaseun', 'Fatimah', 'Deola', 'Bola', 
-    'Titi', 'Oluwaseun', 'Lanre', 'Bola', 'Fadekemi', 
-    'Micheal', 'Samuel', 'Ikechukwu', 'Chike', 'Chukwudi', 
-    'Chijioke', 'Micheal', 'Philip', 'Abubakar', 'Ali', 
-    'Usman', 'Sadiq', 'Musa', 'Zainab', 'Aisha', 
-    'Fatima', 'Hauwa', 'Bashir', 'Halima', 'Kabir', 
-    'Zahra', 'Yusuf', 'Olayemi', 'Ibraheem', 'Khadijat'
-]
+# Generate Yoruba names
+yoruba_first_names = ['Ayodele', 'Babatunde', 'Boluwatife', 'Damilola', 'Funmilayo', 'Ifeoluwa', 'Kehinde', 'Olamide', 'Olufunmilayo', 'Tayo']  # add 150 unique names
+yoruba_last_names = ['Adebayo', 'Adeyemi', 'Adetokunbo', 'Akinbiyi', 'Akinyemi', 'Fadeyibi', 'Ogunleye', 'Oloruntobi', 'Omolayo', 'Oyetunde']  # add 150 unique names
 
-yoruba_last_names = [
-    'Adebola', 'Adeyemi', 'Adelani', 'Adedoyin', 'Afolabi', 'Alabi', 
-    'Bello', 'Dada', 'Emmanuel', 'Ogunleye', 'Okwuosa', 'Akanbi', 
-    'Oba', 'Olajide', 'Olaoye', 'Olasunkanmi', 'Olujimi', 
-    'Olofinjana', 'Oluwatoyin', 'Olatunji', 'Okoro', 'Okunola', 
-    'Okwuosa', 'Olayiwola', 'Oni', 'Salami', 'Saliu', 
-    'Shodipo', 'Sulaimon', 'Tajudeen', 'Umar', 'Yusuf', 
-    'Zubair', 'Omoniyi', 'Alabi', 'Adedayo', 'Adelakun', 
-    'Abdul', 'Abubakar', 'Abiola', 'Alabi', 'Adetunji', 
-    'Ayobami', 'Emeka', 'Ibrahim', 'Izuchukwu', 'Nwachukwu', 
-    'Obinna', 'Okwuosa', 'Okwudili', 'Onyeabor', 'Onyemaechi', 
-    'Tijani', 'Wale', 'Yekini', 'Abidemi', 'Adeagbo', 
-    'Adelani', 'Ajayi', 'Akinyemi', 'Ali', 'Amadi', 
-    'Azeez', 'Chukwuma', 'Chinyere', 'Chinonso', 'Chuka', 
-    'Daniel', 'Ehi', 'Emeka', 'Fadipe', 'Fola', 
-    'Gideon', 'Ibe', 'Igbinosa', 'Innocent', 'Iru', 
-    'Joshua', 'Kehinde', 'Moses', 'Nnaji', 'Nwanne', 
-    'Obinna', 'Oghenero', 'Okwudili', 'Oluoch', 'Olayiwola', 
-    'Oni', 'Osawe', 'Ozuru', 'Ozuru', 'Suleiman', 
-    'Tade', 'Tajudeen', 'Temitope', 'Wasiu', 'Yekeen'
-]
+# Helper function to pick weighted random choice
+def weighted_choice(choices, weights):
+    return random.choices(choices, weights=weights, k=1)[0]
 
-# Define weighted random selection function
-def weighted_choice(options, weights):
-    return random.choices(options, weights)[0]
-
-# Generate student name from Yoruba names only
-def generate_student_name():
-    first_name = random.choice(yoruba_first_names)
-    last_name = random.choice(yoruba_last_names)
-    return first_name, last_name
-
-# Generate age based on student class
-def generate_age(student_class):
-    if student_class == 'SS1':
-        return random.randint(13, 14)
-    elif student_class == 'SS2':
-        return random.randint(14, 16)
-    else:
-        return random.randint(15, 18)
-
-# Create empty lists to hold the records for each table
+# Generate Dim_Student table data
 students = []
+for _ in range(400):
+    student = {
+        'student_id': fake.unique.random_int(min=1, max=5000),
+        'first_name': random.choice(yoruba_first_names),
+        'last_name': random.choice(yoruba_last_names),
+        'age': random.randint(13, 16),
+        'gender': random.choice(['M', 'F']),
+        'student_class': random.choice(['SS1', 'SS2', 'SS3']),
+        'address_type': random.choice(['Rural', 'Urban']),
+        'absent_times': weighted_choice([0, 1, 2, 3, 4, 5], [0.45, 0.45, 0.10, 0.0, 0.0, 0.0]),
+        'goes_out_with_friends': random.choice([True, False]),
+        'desire_higher_education': True,
+        'family_support': 5,
+        'internet_access': weighted_choice([True, False], [0.90, 0.10]),
+        'commute_time': weighted_choice(range(5, 31), [0.80 if 5 <= x <= 20 else 0.20 for x in range(5, 31)]),
+        'living_status': weighted_choice(['T', 'A'], [0.97, 0.03]),
+        'time_spent_on_math': weighted_choice([3, 4, 5], [0.30, 0.35, 0.35]),
+        'time_spent_on_english': weighted_choice([3, 4, 5], [0.30, 0.35, 0.35])
+    }
+    students.append(student)
+
+# Generate Dim_Parent table data
 parents = []
-teachers = []
-school_facilities = []
-performances = []
-
-# Generate data for 300 students
-for student_id in range(1, 301):
-    # Generate student name and attributes
-    first_name, last_name = generate_student_name()
-    student_class = random.choice(['SS1', 'SS2', 'SS3'])  # Class selection
-    age = generate_age(student_class)
-    gender = random.choice(['Male', 'Female'])
-    absent_times = weighted_choice([0, 1, 2, 3, 4, 5], [0.45, 0.45, 0.10, 0.01, 0.01, 0.01])  # 90% between 0 and 2
-    address_type = random.choice(['Rural', 'Urban'])
-    goes_out_with_friends = random.choice(['Yes', 'No'])
-    desire_higher_education = 'Yes'  # 100% Yes
-    family_support = weighted_choice(range(4, 6), [0.05, 0.95])  # 95% at 5
-    internet_access = 'Yes'  # 100% Yes
-    commute_time = weighted_choice(range(5, 21), [0.8] * 6 + [0.2] * 16)  # 80% between 5 and 10 mins
-    living_status = weighted_choice(['T', 'A'], [0.33, 0.67])  # 67% A
-
-    students.append({
-        'student_id': student_id,
-        'first_name': first_name,
-        'last_name': last_name,
-        'age': age,
-        'gender': gender,
-        'student_class': student_class,
-        'absent_times': absent_times,
-        'address_type': address_type,
-        'goes_out_with_friends': goes_out_with_friends,
-        'desire_higher_education': desire_higher_education,
-        'family_support': family_support,
-        'internet_access': internet_access,
-        'commute_time': commute_time,
-        'living_status': living_status
-    })
-
-    # Generate parent attributes
-    parent_income = weighted_choice(range(200000, 600001), [0.03] * 200001 + [0.97] * 400001)  # 97% between 400k and 600k
-    parents.append({
-        'parent_id': student_id,  # Use student_id as parent_id for simplicity
-        'parent_income': parent_income,
+for _ in range(400):
+    parent = {
+        'parent_id': fake.unique.random_int(min=1, max=5000),
+        'parent_income': weighted_choice([random.uniform(400000, 700000), random.uniform(700001, 800000)], [0.95, 0.05]),
         'mother_job': fake.job(),
-        'father_job': fake.job(),
-    })
+        'father_job': fake.job()
+    }
+    parents.append(parent)
 
-    # Generate teacher attributes
-    teachers.append({
-        'teacher_id': student_id,  # Use student_id as teacher_id for simplicity
-        'qualification': random.choice(['NCE', 'B.Ed', 'M.Ed', 'PhD']),
-        'experience_years': random.randint(1, 20),
-        'subject_specialization': random.choice(['Mathematics', 'Science', 'Literature', 'History'])
-    })
+# Generate Dim_Teacher table data
+teachers = []
+for _ in range(50):  # Assuming 50 teachers
+    teacher = {
+        'teacher_id': fake.unique.random_int(min=1, max=100),
+        'qualification': weighted_choice(['B.Sc', 'M.Sc'], [0.30, 0.70]),
+        'teaching_method': weighted_choice(['Lecture', 'Practical'], [0.50, 0.50])
+    }
+    teachers.append(teacher)
 
-    # Generate school facilities
-    school_facilities.append({
-        'facility_id': student_id,  # Use student_id as facility_id for simplicity
-        'facility_name': random.choice(['Library', 'Science Lab', 'Sports Ground', 'Computer Lab']),
-        'availability': random.choice(['Yes', 'No']),
-        'condition': random.choice(['Good', 'Average', 'Poor'])
-    })
+# Generate Dim_School_Facilities table data
+facilities = []
+for _ in range(10):  # Assuming 10 facilities
+    facility = {
+        'facility_id': fake.unique.random_int(min=1, max=100),
+        'facility_rating': weighted_choice([4, 5], [0.05, 0.95]),
+        'library_access_hours': weighted_choice([3, 4, 5], [0.10, 0.45, 0.45]),
+        'internet_availability': True
+    }
+    facilities.append(facility)
 
-    # Generate performance data
-    performance_score = weighted_choice(range(125, 224), [0.01] * 100 + [0.99] * 99)  # 1% between 195 and 223
-    performances.append({
-        'performance_id': student_id,  # Use student_id as performance_id for simplicity
-        'exam_score': performance_score,
-    })
+# Generate Fact_Student_Performance table data
+performances = []
+for i in range(400):
+    performance = {
+        'performance_id': fake.unique.random_int(min=1, max=5000),
+        'student_id': students[i]['student_id'],
+        'parent_id': parents[i]['parent_id'],
+        'facility_id': random.choice(facilities)['facility_id'],
+        'math_score': weighted_choice(range(49, 97), [0.02 if x < 55 else 0.98 for x in range(49, 97)]),
+        'english_score': weighted_choice(range(49, 97), [0.02 if x < 55 else 0.98 for x in range(49, 97)])
+    }
+    performances.append(performance)
 
-# Create DataFrames for each entity
-students_df = pd.DataFrame(students)
-parents_df = pd.DataFrame(parents)
-teachers_df = pd.DataFrame(teachers)
-school_facilities_df = pd.DataFrame(school_facilities)
-performances_df = pd.DataFrame(performances)
+# Convert lists to DataFrames
+df_students = pd.DataFrame(students)
+df_parents = pd.DataFrame(parents)
+df_teachers = pd.DataFrame(teachers)
+df_facilities = pd.DataFrame(facilities)
+df_performances = pd.DataFrame(performances)
 
-# Save DataFrames to CSV
-students_df.to_csv('students.csv', index=False)
-parents_df.to_csv('parents.csv', index=False)
-teachers_df.to_csv('teachers.csv', index=False)
-school_facilities_df.to_csv('school_facilities.csv', index=False)
-performances_df.to_csv('performances.csv', index=False)
+# Save DataFrames to CSV files
+df_students.to_csv('Dim_Student.csv', index=False)
+df_parents.to_csv('Dim_Parent.csv', index=False)
+df_teachers.to_csv('Dim_Teacher.csv', index=False)
+df_facilities.to_csv('Dim_School_Facilities.csv', index=False)
+df_performances.to_csv('Fact_Student_Performance.csv', index=False)
 
-print("CSV files generated successfully!")
+print("Data generation complete!")
