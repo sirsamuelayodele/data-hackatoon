@@ -1,0 +1,109 @@
+import random
+import pandas as pd
+from faker import Faker
+
+fake = Faker('en_NG')  # Nigerian locale for generating other data
+
+# Generate Yoruba first and last names
+yoruba_first_names = ['Adedeji', 'Adebayo', 'Adeola', 'Adenike', 'Ayotunde', 'Bolaji', 'Damilola', 'Dolapo', 'Eniola', 'Funke'] * 15
+yoruba_last_names = ['Adebanjo', 'Adewale', 'Adesina', 'Ajayi', 'Akinyemi', 'Ogunleye', 'Ogunbiyi', 'Ogunyemi', 'Olumide', 'Oluwadare'] * 15
+random.shuffle(yoruba_first_names)
+random.shuffle(yoruba_last_names)
+
+# Helper functions for weighted random choices
+def weighted_choice(choices, weights):
+    return random.choices(choices, weights=weights, k=1)[0]
+
+# Generate Dim_Student data
+def generate_student_data(num_records=400):
+    student_data = []
+    for i in range(num_records):
+        student_id = i + 1
+        first_name = random.choice(yoruba_first_names)
+        last_name = random.choice(yoruba_last_names)
+        age = random.randint(13, 16)
+        gender = random.choice(['M', 'F'])
+        student_class = random.choice(['SS1', 'SS2', 'SS3'])
+        address_type = random.choice(['Rural', 'Urban'])
+        absent_times = weighted_choice(range(0, 11), [0.3 if x < 7 else 0.7 for x in range(11)])
+        goes_out_with_friends = random.choice([True, False])
+        desire_higher_education = weighted_choice([True, False], [0.35, 0.65])
+        family_support = weighted_choice([1, 2, 3, 4, 5], [0.05, 0.40, 0.40, 0.10, 0.05])
+        internet_access = weighted_choice([True, False], [0.12, 0.88])
+        commute_time = weighted_choice(range(25, 61), [0.2 if x < 30 or x > 55 else 0.8 for x in range(25, 61)])
+        living_status = weighted_choice(['T', 'A'], [0.33, 0.67])
+        time_spent_on_math = weighted_choice([1, 2, 3], [0.10, 0.80, 0.10])
+        time_spent_on_english = weighted_choice([1, 2, 3], [0.10, 0.80, 0.10])
+        
+        student_data.append([
+            student_id, first_name, last_name, age, gender, student_class, 
+            address_type, absent_times, goes_out_with_friends, desire_higher_education, 
+            family_support, internet_access, commute_time, living_status, 
+            time_spent_on_math, time_spent_on_english
+        ])
+    return pd.DataFrame(student_data, columns=[
+        'student_id', 'first_name', 'last_name', 'age', 'gender', 'student_class', 'address_type',
+        'absent_times', 'goes_out_with_friends', 'desire_higher_education', 'family_support',
+        'internet_access', 'commute_time', 'living_status', 'time_spent_on_math', 'time_spent_on_english'
+    ])
+
+# Generate Dim_Parent data
+def generate_parent_data(num_records=400):
+    parent_data = []
+    for i in range(num_records):
+        parent_id = i + 1
+        parent_income = weighted_choice(range(50000, 300001), [0.95 if 50000 <= x <= 150000 else 0.05 for x in range(50000, 300001)])
+        mother_job = fake.job()
+        father_job = fake.job()
+        parent_data.append([parent_id, parent_income, mother_job, father_job])
+    return pd.DataFrame(parent_data, columns=['parent_id', 'parent_income', 'mother_job', 'father_job'])
+
+# Generate Dim_Teacher data
+def generate_teacher_data(num_records=100):
+    teacher_data = []
+    for i in range(num_records):
+        teacher_id = i + 1
+        qualification = 'B.Sc'
+        teaching_method = weighted_choice(['Lecture', 'Practical'], [0.95, 0.05])
+        teacher_data.append([teacher_id, qualification, teaching_method])
+    return pd.DataFrame(teacher_data, columns=['teacher_id', 'qualification', 'teaching_method'])
+
+# Generate Dim_School_Facilities data
+def generate_school_facilities_data(num_records=10):
+    facility_data = []
+    for i in range(num_records):
+        facility_id = i + 1
+        facility_rating = weighted_choice([1, 2, 3], [0.40, 0.55, 0.05])
+        library_access_hours = weighted_choice([0, 1, 2, 3], [0.30, 0.35, 0.20, 0.15])
+        internet_availability = weighted_choice([True, False], [0.06, 0.94])
+        facility_data.append([facility_id, facility_rating, library_access_hours, internet_availability])
+    return pd.DataFrame(facility_data, columns=['facility_id', 'facility_rating', 'library_access_hours', 'internet_availability'])
+
+# Generate Fact_Student_Performance data
+def generate_performance_data(num_records=400):
+    performance_data = []
+    for i in range(num_records):
+        performance_id = i + 1
+        student_id = i + 1
+        parent_id = i + 1
+        facility_id = random.randint(1, 10)
+        math_score = weighted_choice(range(20, 71), [0.15 if x < 35 or x > 54 else 0.85 for x in range(20, 71)])
+        english_score = weighted_choice(range(20, 71), [0.15 if x < 35 or x > 54 else 0.85 for x in range(20, 71)])
+        performance_data.append([performance_id, student_id, parent_id, facility_id, math_score, english_score])
+    return pd.DataFrame(performance_data, columns=['performance_id', 'student_id', 'parent_id', 'facility_id', 'math_score', 'english_score'])
+
+# Generate datasets
+df_students = generate_student_data()
+df_parents = generate_parent_data()
+df_teachers = generate_teacher_data()
+df_facilities = generate_school_facilities_data()
+df_performance = generate_performance_data()
+
+# Save datasets to CSV files
+df_students.to_csv('Dim_Student.csv', index=False)
+df_parents.to_csv('Dim_Parent.csv', index=False)
+df_teachers.to_csv('Dim_Teacher.csv', index=False)
+df_facilities.to_csv('Dim_School_Facilities.csv', index=False)
+df_performance.to_csv('Fact_Student_Performance.csv', index=False)
+
+print("Data generation complete!")
